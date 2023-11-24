@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Music Player</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f42b03;
+            background-image: linear-gradient(316deg, #f42b03 0%, #ffbe0b 74%);
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .music-player {
+            background: linear-gradient(to bottom, #000, #FF0000);
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 300px;
+        }
+        .image-box {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        .image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        h1 {
+            font-size: 24px;
+            margin: 0;
+           color: #767676;
+        }
+        audio {
+            width: 100%;
+        }
+        .audio-controls {
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .btn {
+            background: linear-gradient(to bottom, #000, #FF0000);
+            color: #7b7b7b;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        ul.playlist {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            text-align: center;
+            margin-top: 20px;
+            display: none; 
+            
+        }
+        ul.playlist li {
+            padding: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        ul.playlist li:hover {
+            background-color: #4c4c4c;
+        }
+        .show-playlist-button {
+            background: linear-gradient(to bottom, #000, #FF0000);
+            color: #888888;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="music-player">
+        <div class="image-box"> 
+            <img src="images/Ford Mustang.png" alt="Album Cover">
+        </div>
+        <h1>Music App</h1>
+        <audio id="audio" controls>
+            <source src="" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        <div class="audio-controls">
+            <button id="prev" class="btn"><i class="fas fa-backward"></i></button>
+            <button id="play-pause" class="btn"><i class="fas fa-play"></i></button>
+            <button id="next" class="btn"><i class="fas fa-forward"></i></button>
+            <button id="replay" class="btn"><i class="fas fa-redo"></i></button>
+        </div>
+        <ul class="playlist">
+            <li data-src="Noizy ft Lacrim & Ghali & Rayvanny - Alo Alo.mp3">Alo</li>
+            <li data-src="Alan Walker Sing Me To Sleep.mp3">Sing me To Sleep</li>
+            <li data-src="Noizy ft Yll Limani -  Yalla.mp3">Yalla</li>
+            <li data-src="Alan Walker, Sabrina Carpenter & Farruko On My Way.mp3">On my Way</li>
+            <li data-src="Gangsta's Paradise Lofi Fruits Music [TikTok Remix].mp3">Gangsta Paradise Remix</li>  
+            
+        </ul>
+        <button id="show-playlist" class="show-playlist-button">Playlist</button>
+    </div>
+    <script>
+        const audio = document.getElementById('audio');
+        const playPauseButton = document.getElementById('play-pause');
+        const prevButton = document.getElementById('prev');
+        const nextButton = document.getElementById('next');
+        const playlist = document.querySelector('.playlist');
+        const playlistItems = playlist.querySelectorAll('li');
+        const showPlaylistButton = document.getElementById('show-playlist');
+        const replayButton = document.getElementById('replay');
+
+        let currentTrackIndex = 0;
+        const tracks = [];
+
+        playlistItems.forEach((item, index) => {
+            const src = item.getAttribute('data-src');
+            tracks.push(src);
+
+            item.addEventListener('click', () => {
+                currentTrackIndex = index;
+                loadTrack(currentTrackIndex);
+            });
+        });
+
+        function loadTrack(index) {
+            audio.src = tracks[index];
+            audio.load();
+            audio.play();
+            playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
+        }
+
+        function playNextTrack() {
+            currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+            loadTrack(currentTrackIndex);
+        }
+
+        function playPrevTrack() {
+            currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+            loadTrack(currentTrackIndex);
+        }
+
+        playPauseButton.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play();
+                playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
+            } else {
+                audio.pause();
+                playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
+            }
+        });
+
+        nextButton.addEventListener('click', playNextTrack);
+        prevButton.addEventListener('click', playPrevTrack);
+
+        showPlaylistButton.addEventListener('click', () => {
+            playlist.style.display = playlist.style.display === 'none' ? 'block' : 'none';
+        });
+
+        replayButton.addEventListener('click', () => {
+    audio.currentTime = 0; // Rewind the currently playing song to the beginning
+});
+
+    </script>
+</body>
+</html>  
+
